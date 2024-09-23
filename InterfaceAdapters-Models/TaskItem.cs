@@ -16,7 +16,7 @@ namespace InterfaceAdapters_Models
         public required string TaskTitle { get; set; }
 
         [Column("task_description")]
-        public string TaskDescription { get; set; }
+        public string? TaskDescription { get; set; }
 
         [Column("task_status")]
         public string? TaskStatus { get; set; }

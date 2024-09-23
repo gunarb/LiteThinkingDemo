@@ -38,7 +38,10 @@ namespace InterfaceAdapters_Repository
         public async Task<TaskItem> GetByIdAsync(int id)
         {
             TaskItem? taskItem = await _dbContext.TaskItems.FindAsync(id);
-            return taskItem;
+
+            if (taskItem!=null) return taskItem;
+
+            throw new Exception(string.Format("Task not with id={0} not found", id));
         }
 
         /// <summary>
