@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 // ******** Dependencies ********
 // Data base
-builder.Services.AddDbContext<AppDbContext>(options => 
+builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
@@ -34,11 +34,14 @@ builder.Services.AddScoped<GetByIdUseCase<TaskItem>>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+}*/
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -59,7 +62,7 @@ app.MapGet("/get-task-id", async (GetByIdUseCase<TaskItem> taskUseCase, int id) 
 .WithOpenApi();
 
 // Create a new task
-//app.MapPost("/new-task", async (TaskItemRequestDTO taskItemRequest, 
+//app.MapPost("/new-task", async (TaskItemRequestDTO taskItemRequest,
 //    AddTaskItemUseCase<TaskItemRequestDTO> taskItemUseCase) =>
 //{
 //    await taskItemUseCase.ExecuteAsync(taskItemRequest);
@@ -70,6 +73,6 @@ app.MapGet("/get-task-id", async (GetByIdUseCase<TaskItem> taskUseCase, int id) 
 
 // TODO mark a task as completed => a put method
 
-// TODO delete a task => create a IPresenter to filter by a View Model 
+// TODO delete a task => create a IPresenter to filter by a View Model
 
 app.Run();
