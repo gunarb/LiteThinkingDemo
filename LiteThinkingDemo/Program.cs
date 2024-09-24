@@ -3,7 +3,6 @@ using Domain;
 using InterfaceAdapters_Data;
 using InterfaceAdapters_Mappers;
 using InterfaceAdapters_Mappers.Dtos.Requests;
-using InterfaceAdapters_Models;
 using InterfaceAdapters_Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +28,8 @@ builder.Services.AddScoped<IMapper<TaskItemRequestDTO, TaskItemEntity>, TaskItem
 builder.Services.AddScoped<GetAllUseCase<TaskItemEntity>>();
 builder.Services.AddScoped<GetByIdUseCase<TaskItemEntity>>();
 builder.Services.AddScoped<AddTaskItemUseCase<TaskItemRequestDTO>>();
+builder.Services.AddScoped<UpdateTaskItemUseCase<TaskItemEntity>>();
+builder.Services.AddScoped<DeleteTaskItemUseCase<TaskItemEntity>>();
 
 // ******** App ********
 var app = builder.Build();
@@ -54,9 +55,10 @@ app.MapGet("/get-tasks", async (GetAllUseCase<TaskItemEntity> taskItemUseCase) =
 .WithOpenApi();
 
 // Get a task by id - TODO convert TaskItemEntity to TaskItem
-app.MapGet("/get-task-id", async (GetByIdUseCase<TaskItemEntity> taskItemUseCase, int id) =>
+app.MapGet("/get-task-id", async (GetByIdUseCase<TaskItemEntity> taskItemUseCase, 
+    int taskId) =>
 {
-    return await taskItemUseCase.ExecuteAsync(id);
+    return await taskItemUseCase.ExecuteAsync(taskId);
 })
 .WithName("task")
 .WithOpenApi();
@@ -71,8 +73,25 @@ app.MapPost("/new-task", async (TaskItemRequestDTO taskItemRequest,
 .WithName("addTaskItem")
 .WithOpenApi();
 
-// TODO mark a task as completed => a put method
+// Mark a task as completed - TODO convert TaskItemEntity to TaskItem
+app.MapPut("/update-status", async (UpdateTaskItemUseCase<TaskItemEntity> taskItemUseCase,
+    int taskId, string newStatus) =>
+{
+    await taskItemUseCase.ExecuteAsync(taskId, newStatus);
+    return Results.NoContent();
+})
+.WithName("updateTaskItem")
+.WithOpenApi();
 
-// TODO delete a task => create a IPresenter to filter by a View Model
+// Delete a task - TODO convert TaskItemEntity to TaskItem
+// create a IPresenter to filter by a View Model instead of delete from DB
+app.MapDelete("/delete-task-id", async (DeleteTaskItemUseCase<TaskItemEntity> taskItemUseCase, 
+    int taskId) =>
+{
+    await taskItemUseCase.ExecuteAsync(taskId);
+    return Results.NoContent();
+})
+.WithName("deleteTaskItem")
+.WithOpenApi();
 
 app.Run();
