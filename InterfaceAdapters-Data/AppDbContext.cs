@@ -1,4 +1,4 @@
-﻿using InterfaceAdapters_Models;
+﻿using Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace InterfaceAdapters_Data
@@ -11,11 +11,11 @@ namespace InterfaceAdapters_Data
             : base(options)
         { }
 
-        public DbSet<TaskItem> TaskItems { get; set; }
+        public DbSet<TaskItemEntity> TaskItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TaskItem>().ToTable(_taskTableName);
+            modelBuilder.Entity<TaskItemEntity>().ToTable(_taskTableName);
         }
     }
 }

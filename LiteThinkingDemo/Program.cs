@@ -21,14 +21,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// Interface Implementation
-builder.Services.AddScoped<IRepository<TaskItem>, TaskRepository>();
+// Interface Implementation - TODO convert TaskItemEntity to TaskItem
+builder.Services.AddScoped<IRepository<TaskItemEntity>, TaskRepository>();
 builder.Services.AddScoped<IMapper<TaskItemRequestDTO, TaskItemEntity>, TaskItemsMapper>();
 
-// Use Cases
-builder.Services.AddScoped<GetAllUseCase<TaskItem>>();
-builder.Services.AddScoped<GetByIdUseCase<TaskItem>>();
-//builder.Services.AddScoped<AddTaskItemUseCase<TaskItemRequestDTO>>();
+// Use Cases - TODO convert TaskItemEntity to TaskItem
+builder.Services.AddScoped<GetAllUseCase<TaskItemEntity>>();
+builder.Services.AddScoped<GetByIdUseCase<TaskItemEntity>>();
+builder.Services.AddScoped<AddTaskItemUseCase<TaskItemRequestDTO>>();
 
 // ******** App ********
 var app = builder.Build();
@@ -45,31 +45,31 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-// Get the list of all tasks
-app.MapGet("/get-tasks", async (GetAllUseCase<TaskItem> taskUseCase) =>
+// Get the list of all tasks - TODO convert TaskItemEntity to TaskItem
+app.MapGet("/get-tasks", async (GetAllUseCase<TaskItemEntity> taskItemUseCase) =>
 {
-    return await taskUseCase.ExecuteAsync();
+    return await taskItemUseCase.ExecuteAsync();
 })
 .WithName("tasks")
 .WithOpenApi();
 
-// Get a task by id
-app.MapGet("/get-task-id", async (GetByIdUseCase<TaskItem> taskUseCase, int id) =>
+// Get a task by id - TODO convert TaskItemEntity to TaskItem
+app.MapGet("/get-task-id", async (GetByIdUseCase<TaskItemEntity> taskItemUseCase, int id) =>
 {
-    return await taskUseCase.ExecuteAsync(id);
+    return await taskItemUseCase.ExecuteAsync(id);
 })
 .WithName("task")
 .WithOpenApi();
 
 // Create a new task
-//app.MapPost("/new-task", async (TaskItemRequestDTO taskItemRequest,
-//    AddTaskItemUseCase<TaskItemRequestDTO> taskItemUseCase) =>
-//{
-//    await taskItemUseCase.ExecuteAsync(taskItemRequest);
-//    return Results.Created();
-//})
-//.WithName("addTaskItem")
-//.WithOpenApi();
+app.MapPost("/new-task", async (TaskItemRequestDTO taskItemRequest,
+    AddTaskItemUseCase<TaskItemRequestDTO> taskItemUseCase) =>
+{
+    await taskItemUseCase.ExecuteAsync(taskItemRequest);
+    return Results.Created();
+})
+.WithName("addTaskItem")
+.WithOpenApi();
 
 // TODO mark a task as completed => a put method
 
