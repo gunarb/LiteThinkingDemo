@@ -16,10 +16,8 @@ namespace Application
 
         public async Task ExecuteAsync(TDTO dto)
         {
-            //TaskItemEntity taskItem
-            //    = _mapper.ToMap(dto)
-            //    ?? throw new Exception("The is an error creating the task item");
-            var taskItem = _mapper.ToMap(dto);
+            TaskItemEntity taskItem = 
+                _mapper.ToMap(dto) ?? throw new Exception("There is an error creating the task item");
 
             if (string.IsNullOrEmpty(taskItem.TaskTitle))
             {
